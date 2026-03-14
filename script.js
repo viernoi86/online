@@ -1,17 +1,24 @@
 async function getUserId(username) {
 
-    const res = await fetch("https://users.roblox.com/v1/usernames/users", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            usernames: [username],
-            excludeBannedUsers: false
-        })
-    });
+    const res = await fetch(
+        "https://corsproxy.io/https://users.roblox.com/v1/usernames/users",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                usernames: [username],
+                excludeBannedUsers: false
+            })
+        }
+    );
 
     const data = await res.json();
+
+    if (!data.data || data.data.length === 0) {
+        throw "User not found";
+    }
 
     return data.data[0].id;
 }
@@ -29,7 +36,7 @@ async function checkUser() {
         const userId = await getUserId(username);
 
         const res = await fetch(
-            "https://presence.roblox.com/v1/presence/users",
+            "https://corsproxy.io/https://presence.roblox.com/v1/presence/users",
             {
                 method: "POST",
                 headers: {
@@ -52,7 +59,8 @@ async function checkUser() {
 
     } catch (err) {
 
-        result.innerText = "Error";
+        console.log(err);
+        result.innerText = "Error / Username invalid / Proxy blocked";
 
     }
 
